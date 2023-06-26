@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount, afterUpdate } from "svelte";
-	import { fade } from "svelte/transition";
+	import { createEventDispatcher, onMount } from "svelte";
 
 	const dispatch = createEventDispatcher();
 
@@ -12,14 +11,62 @@
 	const RESPONSE_B_INDEX = 2;
 
 	let buttonValues = [
-		{ label: "A", score: 1, indexToDelete: RESPONSE_B_INDEX, fontSize: 30 },
-		{ label: "A", score: 2, indexToDelete: RESPONSE_B_INDEX, fontSize: 24 },
-		{ label: "A", score: 3, indexToDelete: RESPONSE_B_INDEX, fontSize: 18 },
-		{ label: "A", score: 4, indexToDelete: RESPONSE_B_INDEX, fontSize: 12 },
-		{ label: "B", score: 5, indexToDelete: RESPONSE_A_INDEX, fontSize: 12 },
-		{ label: "B", score: 6, indexToDelete: RESPONSE_A_INDEX, fontSize: 18 },
-		{ label: "B", score: 7, indexToDelete: RESPONSE_A_INDEX, fontSize: 24 },
-		{ label: "B", score: 8, indexToDelete: RESPONSE_A_INDEX, fontSize: 30 }
+		{
+			label: "A",
+			score: 1,
+			indexToDelete: RESPONSE_B_INDEX,
+			fontSize: 30,
+			css: "rating-button option-a"
+		},
+		{
+			label: "A",
+			score: 2,
+			indexToDelete: RESPONSE_B_INDEX,
+			fontSize: 24,
+			css: "rating-button option-a"
+		},
+		{
+			label: "A",
+			score: 3,
+			indexToDelete: RESPONSE_B_INDEX,
+			fontSize: 18,
+			css: "rating-button option-a"
+		},
+		{
+			label: "A",
+			score: 4,
+			indexToDelete: RESPONSE_B_INDEX,
+			fontSize: 12,
+			css: "rating-button option-a"
+		},
+		{
+			label: "B",
+			score: 5,
+			indexToDelete: RESPONSE_A_INDEX,
+			fontSize: 12,
+			css: "rating-button option-b"
+		},
+		{
+			label: "B",
+			score: 6,
+			indexToDelete: RESPONSE_A_INDEX,
+			fontSize: 18,
+			css: "rating-button option-b"
+		},
+		{
+			label: "B",
+			score: 7,
+			indexToDelete: RESPONSE_A_INDEX,
+			fontSize: 24,
+			css: "rating-button option-b"
+		},
+		{
+			label: "B",
+			score: 8,
+			indexToDelete: RESPONSE_A_INDEX,
+			fontSize: 30,
+			css: "rating-button option-b"
+		}
 	];
 
 	const sortButtons = () => {
@@ -41,7 +88,7 @@
 			<div class="rating-button-row">
 				{#each buttonValues as button, i}
 					<button
-						class="rating-button"
+						class={button.css}
 						style="font-size: {button.fontSize}px;"
 						on:click={() =>
 							handleButtonClick(
@@ -49,6 +96,14 @@
 								button.indexToDelete,
 								button.score
 							)}
+						on:mouseover={() =>
+							dispatch(button.label === "A" ? "aHovered" : "bHovered", true)}
+						on:mouseout={() =>
+							dispatch(button.label === "A" ? "aHovered" : "bHovered", false)}
+						on:focus={() =>
+							dispatch(button.label === "A" ? "aHovered" : "bHovered", true)}
+						on:blur={() =>
+							dispatch(button.label === "A" ? "aHovered" : "bHovered", false)}
 					>
 						<span class="rating-button-label">{button.label}</span>
 					</button>

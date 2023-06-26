@@ -30,8 +30,8 @@ def get_message_pair(user_message) -> List[tuple[str, str]]:
     user_message = response_1[0]
     
     # DialoGPT-small allows faster itereation but not very diverse answers. Upper-case RESP B instead to distinguish.
-    option_a = f"A: {response_1[1]}"
-    option_b = f"B: {response_2[1].upper()}" 
+    option_a = f"{response_1[1]}"
+    option_b = f"{response_2[1].upper()}" 
 
     message_pair = [(user_message, option_a, option_b)]
 

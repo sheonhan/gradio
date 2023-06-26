@@ -44,6 +44,8 @@
 
 	let div: HTMLDivElement;
 	let autoscroll: Boolean;
+	let aIsHovered = false;
+	let bIsHovered = false;
 
 	const dispatch = createEventDispatcher<{
 		change: undefined;
@@ -101,6 +103,50 @@
 			value: score
 		});
 	}
+
+	function addHoverClass(
+		isLastResponse: boolean,
+		j: number,
+		aIsHovered: boolean,
+		bIsHovered: boolean
+	) {
+		if (!isLastResponse) {
+			return "";
+		}
+
+		if (j === 1) {
+			if (aIsHovered) {
+				return "response-a-hovered";
+			} else {
+				return "response-a-not-hovered";
+			}
+		} else if (j === 2) {
+			if (bIsHovered) {
+				return "response-b-hovered";
+			} else {
+				return "response-b-not-hovered";
+			}
+		} else {
+			return "";
+		}
+	}
+
+	function displayResponseLabel(
+		message_pair_length: number,
+		isLastResponse: boolean,
+		j: number,
+		message: string
+	) {
+		console.log(`[LOG] message_pair_length ${message_pair_length}`);
+		if (isLastResponse && message_pair_length >= 2) {
+			if (j === 1) {
+				return `A: ${message}`;
+			} else if (j === 2) {
+				return `B: ${message}`;
+			}
+		}
+		return message;
+	}
 </script>
 
 <div
@@ -117,13 +163,27 @@
 					<div
 						data-testid={j == 0 ? "user" : "bot"}
 						class:latest={i === value.length - 1}
-						class="message {j == 0 ? 'user' : 'bot'}"
+						class="message {j == 0 ? 'user' : 'bot'} {addHoverClass(
+							i === value.length - 1,
+							j,
+							aIsHovered,
+							bIsHovered
+						)}"
 						class:hide={message === null}
 						class:selectable
 						on:click={() => handle_select(i, j, message)}
 					>
 						{#if typeof message === "string"}
-							{@html DOMPurify.sanitize(marked.parse(message))}
+							{@html DOMPurify.sanitize(
+								marked.parse(
+									displayResponseLabel(
+										message_pair.length,
+										i === value.length - 1,
+										j,
+										message
+									)
+								)
+							)}
 							{#if feedback && j == 1}
 								<div class="feedback">
 									{#each feedback as f}
@@ -158,10 +218,12 @@
 						{/if}
 					</div>
 				{/each}
-				{#if i == value.length - 1}
+				{#if i === value.length - 1}
 					<RatingBar
 						messagePairIndex={i}
 						on:select_response={handleSelectRating}
+						on:aHovered={({ detail }) => (aIsHovered = detail)}
+						on:bHovered={({ detail }) => (bIsHovered = detail)}
 					/>
 				{/if}
 			{/each}
@@ -400,5 +462,21 @@
 
 	.message-wrap :global(pre) {
 		position: relative;
+	}
+
+	.response-a-hovered {
+		background-color: var(--border-color-accent);
+	}
+
+	.response-a-not-hovered {
+		background-color: var(--background-fill-secondary);
+	}
+
+	.response-b-hovered {
+		background-color: var(--border-color-accent);
+	}
+
+	.response-b-not-hovered {
+		background-color: var(--background-fill-secondary);
 	}
 </style>
